@@ -1,31 +1,36 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { APP_ROUTES } from '../../app/routes'
+import chevronDown from '../../assets/figma/icons/chevron-down.svg'
+import cnFlag from '../../assets/figma/icons/cn-flag.png'
 import { AuthLayout } from '../../layouts/AuthLayout'
+import { useLocale } from '../../lib/locale'
 import { useCountdown } from '../../lib/use-countdown'
 import { useSessionStore } from '../../lib/session-store'
 import { AppButton } from '../../components/ui/AppButton'
 import { FormCheckbox } from '../../components/ui/FormCheckbox'
 import { FormField } from '../../components/ui/FormField'
-import { registerSchema, type RegisterFormValues } from './auth-schemas'
+import { createRegisterSchema, type RegisterFormValues } from './auth-schemas'
 
 export function RegisterPage() {
   const navigate = useNavigate()
+  const { t } = useLocale()
   const login = useSessionStore((state) => state.login)
   const codeTimer = useCountdown()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const schema = useMemo(() => createRegisterSchema(t), [t])
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       email: '',
       code: '',
@@ -44,48 +49,56 @@ export function RegisterPage() {
   })
 
   return (
-    <AuthLayout pageTitle="欢迎注册" scene="register">
+    <AuthLayout pageTitle={t('auth.register.title')} scene="register">
       <form className="auth-form" onSubmit={onSubmit}>
         <div className="auth-form__fields">
-          <FormField error={errors.email?.message} label="邮箱" required>
+          <FormField error={errors.email?.message} label={t('auth.register.emailLabel')} required>
             <input
               autoComplete="email"
-              placeholder="请输入邮箱"
+              placeholder={t('auth.register.emailPlaceholder')}
               {...register('email')}
             />
           </FormField>
 
-          <FormField error={errors.code?.message} label="验证码" required>
-            <input placeholder="请输入验证码" {...register('code')} />
+          <FormField error={errors.code?.message} label={t('auth.register.codeLabel')} required>
+            <input placeholder={t('auth.register.codePlaceholder')} {...register('code')} />
             <button
-              className="form-field__action"
+              className="form-field__action auth-form__send-code"
               disabled={codeTimer.isRunning}
               onClick={codeTimer.start}
               type="button"
             >
-              {codeTimer.isRunning ? `${codeTimer.seconds}s` : '发送验证码'}
+              {codeTimer.isRunning ? `${codeTimer.seconds}s` : t('common.action.sendCode')}
             </button>
           </FormField>
 
-          <FormField error={errors.phone?.message} label="手机号" required>
-            <span className="form-field__prefix">+86</span>
-            <input inputMode="numeric" placeholder="请输入手机号" {...register('phone')} />
+          <FormField error={errors.phone?.message} label={t('auth.register.phoneLabel')} required>
+            <span className="form-field__prefix">
+              <img alt="" className="form-field__prefix-flag" src={cnFlag} />
+              <span>+86</span>
+              <img alt="" className="form-field__prefix-chevron" src={chevronDown} />
+            </span>
+            <input
+              inputMode="numeric"
+              placeholder={t('auth.register.phonePlaceholder')}
+              {...register('phone')}
+            />
           </FormField>
 
           <FormField
             error={errors.password?.message}
-            hint="最低6位"
-            label="密码"
+            hint={t('auth.password.minHint')}
+            label={t('auth.register.passwordLabel')}
             required
           >
             <input
               autoComplete="new-password"
-              placeholder="请输入密码"
+              placeholder={t('auth.register.passwordPlaceholder')}
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
             />
             <button
-              aria-label={showPassword ? '隐藏密码' : '显示密码'}
+              aria-label={showPassword ? t('auth.password.hide') : t('auth.password.show')}
               className="form-field__toggle"
               onClick={() => setShowPassword((value) => !value)}
               type="button"
@@ -96,17 +109,19 @@ export function RegisterPage() {
 
           <FormField
             error={errors.confirmPassword?.message}
-            label="确认密码"
+            label={t('auth.register.confirmPasswordLabel')}
             required
           >
             <input
               autoComplete="new-password"
-              placeholder="请输入确认密码"
+              placeholder={t('auth.register.confirmPasswordPlaceholder')}
               type={showConfirmPassword ? 'text' : 'password'}
               {...register('confirmPassword')}
             />
             <button
-              aria-label={showConfirmPassword ? '隐藏密码' : '显示密码'}
+              aria-label={
+                showConfirmPassword ? t('auth.password.hide') : t('auth.password.show')
+              }
               className="form-field__toggle"
               onClick={() => setShowConfirmPassword((value) => !value)}
               type="button"
@@ -115,8 +130,11 @@ export function RegisterPage() {
             </button>
           </FormField>
 
-          <FormField error={errors.inviteCode?.message} label="邀请码">
-            <input placeholder="请输入邀请码" {...register('inviteCode')} />
+          <FormField error={errors.inviteCode?.message} label={t('auth.register.inviteCodeLabel')}>
+            <input
+              placeholder={t('auth.register.inviteCodePlaceholder')}
+              {...register('inviteCode')}
+            />
           </FormField>
         </div>
 
@@ -124,17 +142,24 @@ export function RegisterPage() {
           <FormCheckbox
             className="auth-form__checkbox"
             error={errors.agreeToLegal?.message}
-            label="我同意法律文件"
+            label={t('auth.legal.agree')}
             {...register('agreeToLegal')}
           />
         </div>
 
-        <AppButton block disabled={isSubmitting} type="submit" variant="primary">
-          提交
+        <AppButton
+          block
+          className="auth-form__submit"
+          disabled={isSubmitting}
+          type="submit"
+          variant="primary"
+        >
+          {t('auth.register.submit')}
         </AppButton>
 
         <p className="auth-form__switch">
-          已有账号，<Link to={APP_ROUTES.login}>去登录</Link>
+          {t('auth.register.switchPrefix')}
+          <Link to={APP_ROUTES.login}>{t('auth.register.switchAction')}</Link>
         </p>
       </form>
     </AuthLayout>

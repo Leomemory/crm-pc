@@ -1,17 +1,14 @@
 import type { ReactNode } from 'react'
-import {
-  DownOutlined,
-  GlobalOutlined,
-} from '@ant-design/icons'
+import { useEffect, useRef, useState } from 'react'
+import clsx from 'clsx'
 
-import { AUTH_SCENES, RISK_WARNING } from '../data/auth-scenes'
+import chevronDown from '../assets/figma/icons/chevron-down.svg'
+import languageGlobe from '../assets/figma/icons/language-globe.svg'
+import { AuthVisualCarousel } from '../components/layout/AuthVisualCarousel'
+import { AUTH_SCENES } from '../data/auth-scenes'
+import { useLocale } from '../lib/locale'
 import type { AuthSceneVariant } from '../types/app'
-import { BrandMark } from '../components/ui/BrandMark'
-import {
-  LoginIllustration,
-  MallShowcase,
-  RegisterIllustration,
-} from '../components/layout/Illustrations'
+import type { AppLocale } from '../types/app'
 
 interface AuthLayoutProps {
   scene: AuthSceneVariant
@@ -20,60 +17,89 @@ interface AuthLayoutProps {
   children: ReactNode
 }
 
-function SceneVisual({ scene }: { scene: AuthSceneVariant }) {
-  if (scene === 'login') {
-    return <LoginIllustration />
-  }
-
-  if (scene === 'register') {
-    return <RegisterIllustration />
-  }
-
-  return <MallShowcase />
-}
-
 export function AuthLayout({
   scene,
   pageTitle,
   pageDescription,
   children,
 }: AuthLayoutProps) {
-  const visual = AUTH_SCENES[scene]
+  const { locale, setLocale, t } = useLocale()
+  const [isLocaleOpen, setIsLocaleOpen] = useState(false)
+  const localeRef = useRef<HTMLDivElement | null>(null)
+  const sceneConfig = AUTH_SCENES[scene]
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent) {
+      if (!localeRef.current?.contains(event.target as Node)) {
+        setIsLocaleOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+    }
+  }, [])
 
   return (
     <div className="auth-layout">
       <div className="auth-layout__frame">
-        <section className={`auth-layout__visual auth-layout__visual--${scene}`}>
-          <BrandMark className="auth-layout__brand" variant="light" />
-          <header className="auth-layout__visual-copy">
-            <h2>{visual.title}</h2>
-            <p>
-              {visual.highlight ? <span>{visual.highlight}</span> : null}
-              {visual.highlight ? ' ' : null}
-              {visual.subtitle}
-            </p>
-          </header>
-          <div className="auth-layout__visual-art">
-            <SceneVisual scene={scene} />
-          </div>
-          <div className="auth-layout__dots" aria-hidden="true">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <span
-                className={index === visual.dotIndex ? 'is-active' : undefined}
-                key={`${scene}-${index}`}
-              />
-            ))}
-          </div>
+        <section className="auth-layout__visual">
+          <AuthVisualCarousel initialSlideIndex={sceneConfig.initialSlideIndex} />
         </section>
 
         <section className="auth-layout__panel">
-          <button className="auth-layout__locale" type="button">
-            <GlobalOutlined />
-            <span>中文</span>
-            <DownOutlined />
-          </button>
+          <div className="auth-layout__locale-wrap" ref={localeRef}>
+            <button
+              aria-expanded={isLocaleOpen}
+              className={clsx('auth-layout__locale', isLocaleOpen && 'is-open')}
+              onClick={() => setIsLocaleOpen((open) => !open)}
+              type="button"
+            >
+              <span className="auth-layout__locale-main">
+                <img alt="" className="auth-layout__locale-icon" src={languageGlobe} />
+                <span>{t(`common.locale.${locale}`)}</span>
+              </span>
+              <img
+                alt=""
+                className={clsx(
+                  'auth-layout__locale-chevron',
+                  isLocaleOpen && 'is-open',
+                )}
+                src={chevronDown}
+              />
+            </button>
 
-          <div className="auth-layout__panel-inner">
+            {isLocaleOpen ? (
+              <div className="auth-layout__locale-menu">
+                {(['zh_CN', 'en_US'] as AppLocale[]).map((option) => (
+                  <button
+                    className={clsx(
+                      'auth-layout__locale-option',
+                      option === locale && 'is-active',
+                    )}
+                    key={option}
+                    onClick={() => {
+                      setLocale(option)
+                      setIsLocaleOpen(false)
+                    }}
+                    type="button"
+                  >
+                    {t(`common.locale.${option}`)}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <div
+            className={clsx(
+              'auth-layout__panel-inner',
+              `auth-layout__panel-inner--${scene}`,
+            )}
+            style={{ paddingTop: sceneConfig.panelTopOffset }}
+          >
             <header className="auth-layout__panel-header">
               <h1>{pageTitle}</h1>
               {pageDescription ? <p>{pageDescription}</p> : null}
@@ -83,7 +109,7 @@ export function AuthLayout({
         </section>
       </div>
 
-      <p className="auth-layout__risk">{RISK_WARNING}</p>
+      <p className="auth-layout__risk">{t('auth.riskWarning')}</p>
     </div>
   )
 }

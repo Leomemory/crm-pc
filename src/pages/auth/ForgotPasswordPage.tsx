@@ -1,32 +1,35 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { APP_ROUTES } from '../../app/routes'
 import { AuthLayout } from '../../layouts/AuthLayout'
+import { useLocale } from '../../lib/locale'
 import { useCountdown } from '../../lib/use-countdown'
 import { AppButton } from '../../components/ui/AppButton'
 import { FormCheckbox } from '../../components/ui/FormCheckbox'
 import { FormField } from '../../components/ui/FormField'
 import {
-  forgotPasswordSchema,
+  createForgotPasswordSchema,
   type ForgotPasswordFormValues,
 } from './auth-schemas'
 
 export function ForgotPasswordPage() {
   const navigate = useNavigate()
+  const { t } = useLocale()
   const codeTimer = useCountdown()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const schema = useMemo(() => createForgotPasswordSchema(t), [t])
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormValues>({
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       email: '',
       code: '',
@@ -39,48 +42,48 @@ export function ForgotPasswordPage() {
 
   const onSubmit = handleSubmit(async () => {
     navigate(APP_ROUTES.login, {
-      state: { message: '密码已更新，请使用新密码登录。' },
+      state: { messageKey: 'auth.forgot.success' },
     })
   })
 
   return (
-    <AuthLayout pageTitle="忘记密码" scene="forgotPassword">
+    <AuthLayout pageTitle={t('auth.forgot.title')} scene="forgotPassword">
       <form className="auth-form" onSubmit={onSubmit}>
         <div className="auth-form__fields">
-          <FormField error={errors.email?.message} label="邮箱" required>
+          <FormField error={errors.email?.message} label={t('auth.forgot.emailLabel')} required>
             <input
               autoComplete="email"
-              placeholder="请输入邮箱"
+              placeholder={t('auth.forgot.emailPlaceholder')}
               {...register('email')}
             />
           </FormField>
 
-          <FormField error={errors.code?.message} label="验证码" required>
-            <input placeholder="请输入验证码" {...register('code')} />
+          <FormField error={errors.code?.message} label={t('auth.forgot.codeLabel')} required>
+            <input placeholder={t('auth.forgot.codePlaceholder')} {...register('code')} />
             <button
-              className="form-field__action"
+              className="form-field__action auth-form__send-code"
               disabled={codeTimer.isRunning}
               onClick={codeTimer.start}
               type="button"
             >
-              {codeTimer.isRunning ? `${codeTimer.seconds}s` : '发送验证码'}
+              {codeTimer.isRunning ? `${codeTimer.seconds}s` : t('common.action.sendCode')}
             </button>
           </FormField>
 
           <FormField
             error={errors.password?.message}
-            hint="最低6位"
-            label="新密码"
+            hint={t('auth.password.minHint')}
+            label={t('auth.forgot.passwordLabel')}
             required
           >
             <input
               autoComplete="new-password"
-              placeholder="请输入新密码"
+              placeholder={t('auth.forgot.passwordPlaceholder')}
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
             />
             <button
-              aria-label={showPassword ? '隐藏密码' : '显示密码'}
+              aria-label={showPassword ? t('auth.password.hide') : t('auth.password.show')}
               className="form-field__toggle"
               onClick={() => setShowPassword((value) => !value)}
               type="button"
@@ -91,17 +94,19 @@ export function ForgotPasswordPage() {
 
           <FormField
             error={errors.confirmPassword?.message}
-            label="确认新密码"
+            label={t('auth.forgot.confirmPasswordLabel')}
             required
           >
             <input
               autoComplete="new-password"
-              placeholder="请再次输入新密码"
+              placeholder={t('auth.forgot.confirmPasswordPlaceholder')}
               type={showConfirmPassword ? 'text' : 'password'}
               {...register('confirmPassword')}
             />
             <button
-              aria-label={showConfirmPassword ? '隐藏密码' : '显示密码'}
+              aria-label={
+                showConfirmPassword ? t('auth.password.hide') : t('auth.password.show')
+              }
               className="form-field__toggle"
               onClick={() => setShowConfirmPassword((value) => !value)}
               type="button"
@@ -115,17 +120,24 @@ export function ForgotPasswordPage() {
           <FormCheckbox
             className="auth-form__checkbox"
             error={errors.agreeToLegal?.message}
-            label="我同意法律文件"
+            label={t('auth.legal.agree')}
             {...register('agreeToLegal')}
           />
         </div>
 
-        <AppButton block disabled={isSubmitting} type="submit" variant="primary">
-          提交
+        <AppButton
+          block
+          className="auth-form__submit"
+          disabled={isSubmitting}
+          type="submit"
+          variant="primary"
+        >
+          {t('auth.forgot.submit')}
         </AppButton>
 
         <p className="auth-form__switch">
-          已有账号，<Link to={APP_ROUTES.login}>去登录</Link>
+          {t('auth.forgot.switchPrefix')}
+          <Link to={APP_ROUTES.login}>{t('auth.forgot.switchAction')}</Link>
         </p>
       </form>
     </AuthLayout>

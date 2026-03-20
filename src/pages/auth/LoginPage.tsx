@@ -6,19 +6,22 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { APP_ROUTES } from '../../app/routes'
 import { AuthLayout } from '../../layouts/AuthLayout'
+import { useLocale } from '../../lib/locale'
 import { useSessionStore } from '../../lib/session-store'
 import { AppButton } from '../../components/ui/AppButton'
 import { FormCheckbox } from '../../components/ui/FormCheckbox'
 import { FormField } from '../../components/ui/FormField'
-import { loginSchema, type LoginFormValues } from './auth-schemas'
+import { createLoginSchema, type LoginFormValues } from './auth-schemas'
 
-type SuccessState = { message?: string } | null
+type SuccessState = { messageKey?: string } | null
 
 export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { t } = useLocale()
   const login = useSessionStore((state) => state.login)
   const [showPassword, setShowPassword] = useState(false)
+  const schema = useMemo(() => createLoginSchema(t), [t])
   const successState = useMemo(
     () => (location.state as SuccessState) ?? null,
     [location.state],
@@ -29,7 +32,7 @@ export function LoginPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       account: '',
       password: '',
@@ -45,37 +48,37 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      pageDescription="欢迎来到ACCM客户管理系统"
-      pageTitle="欢迎回来"
+      pageDescription={t('auth.login.description')}
+      pageTitle={t('auth.login.title')}
       scene="login"
     >
       <form className="auth-form" onSubmit={onSubmit}>
-        {successState?.message ? (
-          <div className="auth-form__notice">{successState.message}</div>
+        {successState?.messageKey ? (
+          <div className="auth-form__notice">{t(successState.messageKey)}</div>
         ) : null}
 
         <div className="auth-form__fields">
           <FormField
             error={errors.account?.message}
-            label="邮箱/帐号"
+            label={t('auth.login.accountLabel')}
             required={false}
           >
             <input
               autoComplete="username"
-              placeholder="请输入邮箱/账号"
+              placeholder={t('auth.login.accountPlaceholder')}
               {...register('account')}
             />
           </FormField>
 
-          <FormField error={errors.password?.message} label="密码">
+          <FormField error={errors.password?.message} label={t('auth.login.passwordLabel')}>
             <input
               autoComplete="current-password"
-              placeholder="请输入密码"
+              placeholder={t('auth.login.passwordPlaceholder')}
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
             />
             <button
-              aria-label={showPassword ? '隐藏密码' : '显示密码'}
+              aria-label={showPassword ? t('auth.password.hide') : t('auth.password.show')}
               className="form-field__toggle"
               onClick={() => setShowPassword((value) => !value)}
               type="button"
@@ -88,20 +91,27 @@ export function LoginPage() {
         <div className="auth-form__row">
           <FormCheckbox
             className="auth-form__checkbox"
-            label="记住我"
+            label={t('auth.login.remember')}
             {...register('remember')}
           />
           <Link className="auth-form__link" to={APP_ROUTES.forgotPassword}>
-            忘记密码？
+            {t('auth.login.forgot')}
           </Link>
         </div>
 
-        <AppButton block disabled={isSubmitting} type="submit" variant="primary">
-          登录
+        <AppButton
+          block
+          className="auth-form__submit"
+          disabled={isSubmitting}
+          type="submit"
+          variant="primary"
+        >
+          {t('auth.login.submit')}
         </AppButton>
 
         <p className="auth-form__switch">
-          还没有账号，<Link to={APP_ROUTES.register}>去注册</Link>
+          {t('auth.login.switchPrefix')}
+          <Link to={APP_ROUTES.register}>{t('auth.login.switchAction')}</Link>
         </p>
       </form>
     </AuthLayout>

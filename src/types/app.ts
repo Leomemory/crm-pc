@@ -1,4 +1,5 @@
 export type AuthSceneVariant = 'login' | 'register' | 'forgotPassword'
+export type AppLocale = 'zh_CN' | 'en_US'
 
 export type MenuIconKey =
   | 'home'
