@@ -8,6 +8,7 @@ interface FormFieldProps {
   hint?: ReactNode
   children: ReactNode
   className?: string
+  controlClassName?: string
 }
 
 export function FormField({
@@ -17,6 +18,7 @@ export function FormField({
   hint,
   children,
   className,
+  controlClassName,
 }: FormFieldProps) {
   return (
     <label className={clsx('form-field', className)}>
@@ -24,7 +26,13 @@ export function FormField({
         {required ? <span className="form-field__required">*</span> : null}
         {label}
       </span>
-      <div className={clsx('form-field__control', error && 'is-error')}>
+      <div
+        className={clsx(
+          'form-field__control',
+          error && 'is-error',
+          controlClassName,
+        )}
+      >
         {children}
       </div>
       {hint ? <span className="form-field__hint">{hint}</span> : null}

@@ -1,5 +1,6 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { zodResolver } from '@hookform/resolvers/zod'
+import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
@@ -58,16 +59,25 @@ export function ForgotPasswordPage() {
             />
           </FormField>
 
-          <FormField error={errors.code?.message} label={t('auth.forgot.codeLabel')} required>
-            <input placeholder={t('auth.forgot.codePlaceholder')} {...register('code')} />
-            <button
-              className="form-field__action auth-form__send-code"
-              disabled={codeTimer.isRunning}
-              onClick={codeTimer.start}
-              type="button"
-            >
-              {codeTimer.isRunning ? `${codeTimer.seconds}s` : t('common.action.sendCode')}
-            </button>
+          <FormField
+            controlClassName="form-field__control--plain"
+            error={errors.code?.message}
+            label={t('auth.forgot.codeLabel')}
+            required
+          >
+            <div className="form-field__split">
+              <div className={clsx('form-field__surface', errors.code?.message && 'is-error')}>
+                <input placeholder={t('auth.forgot.codePlaceholder')} {...register('code')} />
+              </div>
+              <button
+                className="form-field__surface form-field__surface--action"
+                disabled={codeTimer.isRunning}
+                onClick={codeTimer.start}
+                type="button"
+              >
+                {codeTimer.isRunning ? `${codeTimer.seconds}s` : t('common.action.sendCode')}
+              </button>
+            </div>
           </FormField>
 
           <FormField

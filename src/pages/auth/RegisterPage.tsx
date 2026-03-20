@@ -1,12 +1,13 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { zodResolver } from '@hookform/resolvers/zod'
+import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { APP_ROUTES } from '../../app/routes'
-import chevronDown from '../../assets/figma/icons/chevron-down.svg'
 import cnFlag from '../../assets/figma/icons/cn-flag.png'
+import phoneChevron from '../../assets/figma/icons/phone-chevron.svg'
 import { AuthLayout } from '../../layouts/AuthLayout'
 import { useLocale } from '../../lib/locale'
 import { useCountdown } from '../../lib/use-countdown'
@@ -60,29 +61,50 @@ export function RegisterPage() {
             />
           </FormField>
 
-          <FormField error={errors.code?.message} label={t('auth.register.codeLabel')} required>
-            <input placeholder={t('auth.register.codePlaceholder')} {...register('code')} />
-            <button
-              className="form-field__action auth-form__send-code"
-              disabled={codeTimer.isRunning}
-              onClick={codeTimer.start}
-              type="button"
-            >
-              {codeTimer.isRunning ? `${codeTimer.seconds}s` : t('common.action.sendCode')}
-            </button>
+          <FormField
+            controlClassName="form-field__control--plain"
+            error={errors.code?.message}
+            label={t('auth.register.codeLabel')}
+            required
+          >
+            <div className="form-field__split">
+              <div className={clsx('form-field__surface', errors.code?.message && 'is-error')}>
+                <input placeholder={t('auth.register.codePlaceholder')} {...register('code')} />
+              </div>
+              <button
+                className="form-field__surface form-field__surface--action"
+                disabled={codeTimer.isRunning}
+                onClick={codeTimer.start}
+                type="button"
+              >
+                {codeTimer.isRunning ? `${codeTimer.seconds}s` : t('common.action.sendCode')}
+              </button>
+            </div>
           </FormField>
 
-          <FormField error={errors.phone?.message} label={t('auth.register.phoneLabel')} required>
-            <span className="form-field__prefix">
-              <img alt="" className="form-field__prefix-flag" src={cnFlag} />
-              <span>+86</span>
-              <img alt="" className="form-field__prefix-chevron" src={chevronDown} />
-            </span>
-            <input
-              inputMode="numeric"
-              placeholder={t('auth.register.phonePlaceholder')}
-              {...register('phone')}
-            />
+          <FormField
+            controlClassName="form-field__control--plain"
+            error={errors.phone?.message}
+            label={t('auth.register.phoneLabel')}
+            required
+          >
+            <div className="form-field__split form-field__split--phone">
+              <button className="form-field__surface form-field__surface--selector" type="button">
+                <span className="form-field__selector-main">
+                  <img alt="" className="form-field__prefix-flag" src={cnFlag} />
+                  <span>+86</span>
+                </span>
+                <img alt="" className="form-field__prefix-chevron" src={phoneChevron} />
+              </button>
+
+              <div className={clsx('form-field__surface', errors.phone?.message && 'is-error')}>
+                <input
+                  inputMode="numeric"
+                  placeholder={t('auth.register.phonePlaceholder')}
+                  {...register('phone')}
+                />
+              </div>
+            </div>
           </FormField>
 
           <FormField

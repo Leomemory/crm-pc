@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 
-import chevronDown from '../assets/figma/icons/chevron-down.svg'
+import languageChevron from '../assets/figma/icons/language-chevron.svg'
 import languageGlobe from '../assets/figma/icons/language-globe.svg'
 import { AuthVisualCarousel } from '../components/layout/AuthVisualCarousel'
 import { AUTH_SCENES } from '../data/auth-scenes'
@@ -63,11 +63,8 @@ export function AuthLayout({
               </span>
               <img
                 alt=""
-                className={clsx(
-                  'auth-layout__locale-chevron',
-                  isLocaleOpen && 'is-open',
-                )}
-                src={chevronDown}
+                className="auth-layout__locale-chevron"
+                src={languageChevron}
               />
             </button>
 
