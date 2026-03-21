@@ -167,7 +167,7 @@ a {
   &__label {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     color: var(--crm-text-secondary);
     font-size: 14px;
     line-height: 20px;
@@ -262,6 +262,7 @@ a {
     min-width: 136px;
     padding: 0 12px;
     border: 0;
+    outline: 0;
     background: #fff2e5;
     color: var(--crm-primary-strong);
     font-size: 14px;
@@ -274,6 +275,7 @@ a {
     justify-content: space-between;
     gap: 8px;
     width: 126px;
+    border-right: 0;
     color: rgba(0, 0, 0, 0.88);
     font-size: 14px;
     line-height: 20px;
@@ -289,6 +291,7 @@ a {
 
   &__split--phone {
     grid-template-columns: 126px minmax(0, 1fr);
+    gap: 0;
   }
 
   &__selector-main {
@@ -512,16 +515,21 @@ a {
     }
   }
 
-  &__panel-inner {
-    width: min(480px, calc(100% - 96px));
+  &__panel-scroll {
     height: 100%;
+    padding: 0 24px 0 48px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+  }
+
+  &__panel-inner {
+    width: min(480px, 100%);
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     margin: 0 auto;
     padding-bottom: 48px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-gutter: stable;
   }
 
   &__panel-header {
@@ -529,16 +537,16 @@ a {
     text-align: center;
 
     h1 {
-      margin: 0 0 16px;
+      margin: 0;
       color: var(--crm-text);
       font-family: var(--crm-font-display);
       font-size: 48px;
-      line-height: 1.1;
+      line-height: 58px;
       font-weight: 700;
     }
 
     p {
-      margin: 0;
+      margin: 16px 0 0;
       color: var(--crm-text-tertiary);
       font-size: 18px;
       line-height: 31px;
@@ -1984,8 +1992,8 @@ a {
     grid-template-columns: minmax(300px, 0.72fr) minmax(420px, 1fr);
   }
 
-  .auth-layout__panel-inner {
-    padding-block: 84px;
+  .auth-layout__panel-scroll {
+    padding-inline: 24px 16px;
   }
 
   .console-shell {

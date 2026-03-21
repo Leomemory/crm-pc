@@ -90,18 +90,20 @@ export function AuthLayout({
             ) : null}
           </div>
 
-          <div
-            className={clsx(
-              'auth-layout__panel-inner',
-              `auth-layout__panel-inner--${scene}`,
-            )}
-            style={{ paddingTop: sceneConfig.panelTopOffset }}
-          >
-            <header className="auth-layout__panel-header">
-              <h1>{pageTitle}</h1>
-              {pageDescription ? <p>{pageDescription}</p> : null}
-            </header>
-            {children}
+          <div className="auth-layout__panel-scroll">
+            <div
+              className={clsx(
+                'auth-layout__panel-inner',
+                `auth-layout__panel-inner--${scene}`,
+              )}
+              style={{ paddingTop: sceneConfig.panelTopOffset }}
+            >
+              <header className="auth-layout__panel-header">
+                <h1>{pageTitle}</h1>
+                {pageDescription ? <p>{pageDescription}</p> : null}
+              </header>
+              {children}
+            </div>
           </div>
         </section>
       </div>
