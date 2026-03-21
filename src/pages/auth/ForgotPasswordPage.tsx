@@ -130,7 +130,12 @@ export function ForgotPasswordPage() {
           <FormCheckbox
             className="auth-form__checkbox"
             error={errors.agreeToLegal?.message}
-            label={t('auth.legal.agree')}
+            label={
+              <>
+                {t('auth.legal.prefix')}
+                <span className="form-checkbox__accent">{t('auth.legal.document')}</span>
+              </>
+            }
             {...register('agreeToLegal')}
           />
         </div>

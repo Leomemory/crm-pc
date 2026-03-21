@@ -9,6 +9,8 @@
   "auth.password.show": "Show password",
   "auth.password.hide": "Hide password",
   "auth.legal.agree": "I agree to the legal documents",
+  "auth.legal.prefix": "I agree to the ",
+  "auth.legal.document": "legal documents",
   "auth.visual.trend.title": "Beyond Trends, Lead the Market",
   "auth.visual.trend.description": "A veteran CFD broker trusted by millions of investors worldwide.",
   "auth.visual.awards.title": "Award Winning",

@@ -9,6 +9,8 @@
   "auth.password.show": "显示密码",
   "auth.password.hide": "隐藏密码",
   "auth.legal.agree": "我同意法律文件",
+  "auth.legal.prefix": "我同意",
+  "auth.legal.document": "法律文件",
   "auth.visual.trend.title": "超越趋势， 引领博弈",
   "auth.visual.trend.description": "老牌差价合约经纪商，全球百万投资人的交易之选",
   "auth.visual.awards.title": "屡获大奖",

@@ -387,6 +387,13 @@ a {
     background: #fff;
   }
 
+  &__accent {
+    color: var(--crm-primary-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 1px;
+  }
+
   &__input:checked + &__box {
     border-color: var(--crm-primary);
     background: var(--crm-primary);
@@ -444,15 +451,17 @@ a {
     top: 48px;
     right: 48px;
     z-index: 8;
+    width: 136px;
   }
 
   &__locale {
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
-    width: 120px;
+    gap: 8px;
+    width: 136px;
     height: 40px;
-    padding: 6px 16px;
+    padding: 6px 12px;
     border: 1px solid var(--crm-border);
     border-radius: 22px;
     background: #fff;
@@ -471,9 +480,14 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
     font-size: 14px;
     line-height: 20px;
     color: rgba(0, 0, 0, 0.88);
+  }
+
+  &__locale-label {
+    white-space: nowrap;
   }
 
   &__locale-icon {
@@ -486,10 +500,14 @@ a {
     width: 16px;
     height: 16px;
     flex-shrink: 0;
+    margin-left: auto;
   }
 
   &__locale-menu {
-    margin-top: 12px;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 136px;
     padding: 8px;
     border: 1px solid var(--crm-border);
     border-radius: 16px;
@@ -517,14 +535,13 @@ a {
 
   &__panel-scroll {
     height: 100%;
-    padding: 0 24px 0 48px;
     overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-gutter: stable;
+    scrollbar-gutter: stable both-edges;
   }
 
   &__panel-inner {
-    width: min(480px, 100%);
+    width: min(480px, calc(100% - 48px));
     min-height: 100%;
     display: flex;
     flex-direction: column;
@@ -535,6 +552,10 @@ a {
   &__panel-header {
     margin-bottom: 40px;
     text-align: center;
+
+    &--left {
+      text-align: left;
+    }
 
     h1 {
       margin: 0;
@@ -1993,7 +2014,7 @@ a {
   }
 
   .auth-layout__panel-scroll {
-    padding-inline: 24px 16px;
+    scrollbar-gutter: stable;
   }
 
   .console-shell {

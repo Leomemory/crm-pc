@@ -59,7 +59,7 @@ export function AuthLayout({
             >
               <span className="auth-layout__locale-main">
                 <img alt="" className="auth-layout__locale-icon" src={languageGlobe} />
-                <span>{t(`common.locale.${locale}`)}</span>
+                <span className="auth-layout__locale-label">{t(`common.locale.${locale}`)}</span>
               </span>
               <img
                 alt=""
@@ -98,7 +98,12 @@ export function AuthLayout({
               )}
               style={{ paddingTop: sceneConfig.panelTopOffset }}
             >
-              <header className="auth-layout__panel-header">
+              <header
+                className={clsx(
+                  'auth-layout__panel-header',
+                  !pageDescription && 'auth-layout__panel-header--left',
+                )}
+              >
                 <h1>{pageTitle}</h1>
                 {pageDescription ? <p>{pageDescription}</p> : null}
               </header>
