@@ -471,7 +471,14 @@ export function DashboardPage() {
   }
 
   return (
-    <ConsoleLayout>
+    <ConsoleLayout
+      stickyTopbar={isScrolled}
+      topbarLeading={
+        <p className={clsx('console-topbar__page-title', isScrolled && 'is-visible')}>
+          欢迎来到 ACCM
+        </p>
+      }
+    >
       <div className={clsx('home-page', isScrolled && 'is-scrolled')}>
         <div className="home-page__grid">
           <div className="home-page__main">

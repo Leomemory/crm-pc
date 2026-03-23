@@ -31,6 +31,8 @@ interface ConsoleLayoutProps {
   children: ReactNode
   sidePanel?: ReactNode
   pageClassName?: string
+  topbarLeading?: ReactNode
+  stickyTopbar?: boolean
 }
 
 const MENU_ICON_MAP: Record<MenuIconKey, string> = {
@@ -101,6 +103,8 @@ export function ConsoleLayout({
   children,
   sidePanel,
   pageClassName,
+  topbarLeading,
+  stickyTopbar = false,
 }: ConsoleLayoutProps) {
   const pathname = useLocation().pathname
   const navigate = useNavigate()
@@ -144,8 +148,8 @@ export function ConsoleLayout({
       </aside>
 
       <div className="console-shell__content">
-        <header className="console-topbar">
-          <div className="console-topbar__spacer" />
+        <header className={clsx('console-topbar', stickyTopbar && 'is-sticky-surface')}>
+          <div className="console-topbar__leading">{topbarLeading}</div>
           <div className="console-topbar__actions">
             <div className="console-topbar__locale-wrap" ref={localeRef}>
               <button
